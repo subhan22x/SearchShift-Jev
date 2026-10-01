@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08182a" />
+    <title>SearchShift-Jev — Card Review</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap');
+
+      :root {
+        --ink: #eff7ff;
+        --muted: #a9bfd1;
+        --accent: #93c5fd;
+        --accent-strong: #b9dcff;
+        --glass: rgba(13, 40, 64, 0.78);
+        --card: rgba(5, 23, 42, 0.86);
+        --border: rgba(204, 230, 255, 0.19);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: #071321;
+        color: var(--ink);
+        font-family: 'DM Sans', system-ui, sans-serif;
+      }
+      .page { max-width: 1320px; margin: auto; padding: 56px 28px 84px; }
+      .intro { max-width: 670px; margin-bottom: 36px; }
+      .eyebrow { color: #91b9dc; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; }
+      h1 { font: 600 clamp(35px, 5vw, 62px)/.98 'Playfair Display', Georgia, serif; letter-spacing: -.04em; margin: 12px 0 14px; }
+      .intro p { color: var(--muted); line-height: 1.55; margin: 0; }
+      .rule { height: 1px; background: rgba(177, 215, 246, .17); margin: 38px 0; }
+      .review-note { color: #91b9dc; font-size: 13px; margin: -24px 0 30px; }
+      .gallery { display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: 24px; }
+      .review-card { border: 1px solid rgba(178, 215, 248, .15); border-radius: 22px; overflow: hidden; background: rgba(13, 31, 48, .46); }
+      .review-copy { padding: 16px 18px 17px; }
+      .review-copy h2 { font-size: 15px; margin: 0 0 5px; }
+      .review-copy p { color: #91abc0; font-size: 12px; line-height: 1.35; margin: 0; }
+
+      .phone {
+        position: relative;
+        min-height: 352px;
+        padding: 24px 16px 20px;
+        overflow: hidden;
+        background: linear-gradient(rgba(3, 17, 31, .14), rgba(3, 17, 31, .38)), url('/wallpaper.jpeg') center/cover;
+      }
+      .phone::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(9, 31, 48, .04), rgba(2, 10, 21, .25)); }
+      .surface {
+        position: relative; z-index: 1; padding: 14px; border-radius: 28px;
+        background: linear-gradient(145deg, rgba(65, 116, 152, .73), rgba(12, 38, 65, .79));
+        border: 1px solid rgba(217, 238, 255, .30); box-shadow: 0 22px 42px rgba(0, 7, 15, .35); backdrop-filter: blur(18px);
+      }
+      .search { height: 47px; display: flex; align-items: center; gap: 10px; padding: 0 15px; border-radius: 999px; background: #03070b; color: #f5f9fe; font-size: 16px; }
+      .search .glass { color: #a3c5e5; font-size: 21px; line-height: 0; }
+      .apps { display: flex; gap: 12px; padding: 15px 10px 13px; }
+      .app { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; font-size: 21px; background: rgba(255,255,255,.12); }
+      .app.spotify { background: #1ed760; color: #061d10; font-size: 19px; }
+      .app.chrome { background: conic-gradient(#e94235 0 33%, #f7d74a 0 66%, #35a853 0); color: #2879d6; border: 4px solid #edf5ff; font-size: 0; }
+      .app.obsidian { background: linear-gradient(135deg,#d8b4fe,#5631a9); color: #fff; font-size: 16px; }
+      .intent { border-radius: 19px; padding: 14px; background: linear-gradient(135deg, rgba(17, 48, 76, .95), rgba(4, 24, 43, .94)); border: 1px solid rgba(207,232,254,.11); }
+      .kind { display: flex; justify-content: space-between; align-items: center; color: #b5cce0; font-size: 11px; }
+      .kind strong { color: #d8ecff; font-size: 12px; font-weight: 500; }
+      .action { border: 0; border-radius: 999px; padding: 8px 12px; color: #092039; background: var(--accent-strong); font: 600 11px 'DM Sans', sans-serif; cursor:pointer; transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background .22s ease,color .22s ease; }
+      button:focus-visible, [contenteditable="true"]:focus-visible { outline:2px solid #c6e6ff; outline-offset:3px; }
+      button:hover { transform:translateY(-1px); }
+      button:active { transform:translateY(1px) scale(.96); }
+      .action.is-complete { color:#07301f; background:#8ee5b1; box-shadow:0 4px 13px rgba(31,174,102,.26); }
+      .intent.is-working { animation:cardPulse .42s ease both; }
+      .intent.is-saved { box-shadow:inset 0 0 0 1px rgba(126,231,180,.32),0 7px 20px rgba(3,22,39,.15); }
+      @keyframes cardPulse { 50% { transform:scale(1.012); filter:brightness(1.1); } }
+      .toast { position:fixed; z-index:20; left:50%; bottom:22px; transform:translate(-50%,16px); padding:10px 14px; border:1px solid rgba(205,237,255,.36); border-radius:999px; background:rgba(6,24,42,.92); color:#eaf7ff; box-shadow:0 12px 28px rgba(0,0,0,.3); font:600 12px 'DM Sans',sans-serif; opacity:0; pointer-events:none; transition:opacity .22s ease,transform .22s ease; }
+      .toast.show { opacity:1; transform:translate(-50%,0); }
+      .mini { color: #aac2d6; font-size: 11px; }
+      .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .divider { height: 1px; background: rgba(208,232,250,.12); margin: 11px 0; }
+      .value { font-size: 29px; font-weight: 700; letter-spacing: -.05em; }
+      .weather-main { display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 10px; margin-top: 10px; }
+      .weather-left { display: flex; align-items: center; gap: 9px; }
+      .sun { color: #ffbd38; font-size: 31px; line-height: 1; }
+      .weather-right { display: grid; gap: 2px; color: #ffbb35; font-size: 10px; font-weight: 700; line-height: 1.15; }
+      .weather-right span { display: block; }
+      .music-art { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(135deg,#e8d7b8,#242d3a); color: #121d28; font-size: 11px; font-weight: 700; }
+      .field { height: 34px; display: flex; align-items: center; padding: 0 10px; border: 1px solid rgba(214,237,255,.25); border-radius: 10px; color: #f3f8ff; font-size: 13px; }
+      .checklist { display:grid; gap:8px; margin-top:10px; }
+      .check-item { color:#edf7ff; font-size:14px; line-height:1.1; cursor:pointer; transition:color .18s ease,opacity .18s ease,transform .18s ease; }
+      .check-item::before { content:'□'; display:inline-block; margin-right:8px; color:#9ecbff; font-size:16px; vertical-align:-1px; }
+      .check-item.checked { color:#9eb8c9; text-decoration:line-through; text-decoration-thickness:1px; }
+      .check-item.checked::before { content:'☑'; color:#8ee5b1; }
+      .note-title { margin-top:10px; font-size:14px; font-weight:700; color:#f5f9ff; }
+      .note-body { margin-top:7px; min-height:34px; padding:8px 10px; border:1px solid rgba(214,237,255,.24); border-radius:10px; color:#bcd5eb; font-size:12px; line-height:1.35; }
+      .utility-icon { width:46px; height:46px; flex:0 0 46px; display:grid; place-items:center; border-radius:14px; color:#fff; font-size:23px; box-shadow:inset 0 1px rgba(255,255,255,.42),0 7px 14px rgba(1,12,28,.24); }
+      .utility-icon.link { background:linear-gradient(145deg,#8a62f3,#4e30b3); }
+      .utility-icon.units { background:linear-gradient(145deg,#24c8ba,#087e9b); }
+      .utility-icon.currency { background:linear-gradient(145deg,#ffcc48,#e66a22); }
+      .utility-icon.timer-icon { background:linear-gradient(145deg,#ff7795,#d33763); }
+      .utility-title { color:#f5f9ff; font-size:14px; font-weight:700; }
+      .utility-tag { display:inline-block; margin-top:6px; padding:4px 7px; border-radius:999px; background:rgba(210,233,253,.12); color:#b9d5ec; font-size:9px; }
+      .conversion { display:flex; align-items:center; justify-content:space-between; gap:7px; margin-top:10px; }
+      .conversion-value { color:#f6fbff; font-size:18px; font-weight:700; letter-spacing:-.04em; }
+      .conversion-arrow { color:#74d8de; font-size:17px; }
+      .timer-face { width:58px; height:58px; display:grid; place-items:center; border-radius:50%; color:#fff6fb; font-size:14px; font-weight:700; background:conic-gradient(#ff9eb3 0 74%,rgba(255,255,255,.15) 74%); box-shadow:inset 0 0 0 5px #c64165,0 6px 14px rgba(38,6,20,.28); transition:transform .3s ease,box-shadow .3s ease; }
+      .timer-face.running, .clock.running { animation:timerBreathe 1.25s ease-in-out infinite; }
+      @keyframes timerBreathe { 50% { transform:scale(1.055); box-shadow:inset 0 0 0 5px #c64165,0 0 0 6px rgba(255,130,161,.12),0 8px 18px rgba(38,6,20,.33); } }
+      .time-pills { display: flex; gap: 6px; align-items: center; }
+      .time-pill { border: 1px solid rgba(205,231,252,.24); border-radius: 999px; padding: 6px 9px; background: rgba(198,225,247,.10); color: #dceefe; font: 500 10px 'DM Sans', sans-serif; cursor:pointer; transition:background .18s ease,border-color .18s ease,transform .18s ease; }
+      .time-pill:hover { background:rgba(148,204,248,.23); border-color:rgba(205,231,252,.48); }
+      .time-pill span { color: #96caff; margin-left: 4px; }
+      .timer { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+      .clock { width: 55px; height: 55px; display: grid; place-items: center; border-radius: 50%; border: 2px solid #8fc8ff; color: #f5fbff; font-size: 14px; font-weight: 700; }
+      .split-value { font-size: 23px; font-weight: 700; letter-spacing: -.04em; }
+      .stepper { display: flex; align-items: center; gap: 9px; color: #e7f3ff; font-weight: 700; }
+      .step { width: 23px; height: 23px; border-radius: 7px; border: 1px solid rgba(214,237,255,.22); display: grid; place-items: center; color: #cfe6fa; }
+      .contact { width: 38px; height: 38px; display:grid; place-items:center; border-radius: 50%; background: #efbd9a; color: #553c2c; font-size: 12px; font-weight: 700; }
+      .compact-action-row { display:flex; gap: 8px; margin-top: 10px; }
+      .ghost { border: 1px solid rgba(202,229,250,.24); background: rgba(190,222,247,.08); color: #d7ebfb; }
+      .search-with { display: flex; gap: 9px; padding: 13px 2px 0; }
+      .source { width: 31px; height: 31px; display: grid; place-items: center; border: 1px solid rgba(205,232,252,.16); border-radius: 9px; background: rgba(186,219,246,.14); text-decoration: none; box-shadow: inset 0 1px rgba(255,255,255,.06); }
+      .source:hover { background: rgba(186,219,246,.26); transform: translateY(-1px); }
+      .google { font: 700 17px Arial, sans-serif; background: conic-gradient(from -45deg, #4285f4 0 25%, #34a853 0 45%, #fbbc05 0 65%, #ea4335 0 82%, #4285f4 0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .play { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid #8ab4f8; filter: drop-shadow(-4px 0 #37d0b4) drop-shadow(-7px 0 #f7d154); }
+      .youtube { width: 18px; height: 13px; display: grid; place-items: center; border-radius: 4px; background: #ff1d1d; color: white; font-size: 8px; padding-left: 1px; }
+      .doordash { background: linear-gradient(135deg, #ff3d16, #e92d0a); border-color: rgba(255, 187, 171, .56); color: #fff; }
+      .doordash .kind, .doordash .mini { color: rgba(255,255,255,.78); }
+      .doordash .kind strong { color: #fff; }
+      .food-icon { width: 43px; height: 43px; display:grid; place-items:center; border-radius: 12px; background: rgba(255,255,255,.17); font-size: 24px; }
+      .device-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; background:linear-gradient(145deg,#d7eeff,#76b9f0); color:#0b3454; font-size:28px; box-shadow:inset 0 1px rgba(255,255,255,.8), 0 5px 14px rgba(1,10,20,.22); }
+      .timezone-arrow { flex:1; min-width:74px; text-align:center; }
+      .timezone-diff { color:#a9d5ff; font-size:9px; margin-bottom:2px; }
+      .timezone-line { height:1px; position:relative; background:#8ec9ff; }
+      .timezone-line::after { content:''; position:absolute; right:-1px; top:-3px; border-left:6px solid #8ec9ff; border-top:3px solid transparent; border-bottom:3px solid transparent; }
+      .coin { width:58px; height:58px; display:grid; place-items:center; border-radius:50%; position:relative; color:#c98a24; font:700 23px Georgia,serif; background:radial-gradient(circle at 33% 25%,#fff2b0 0 7%,#eac75c 18%,#a66c13 52%,#ffd673 66%,#7e4a08 83%,#f8d778 87%); border:2px solid #ffd76d; box-shadow:inset 0 0 0 4px rgba(91,52,3,.48), inset 0 0 0 6px rgba(255,243,178,.5), 0 7px 15px rgba(1,10,20,.34); transition:transform .28s; }
+      .coin::after { content:'✦'; font-size:15px; text-shadow:0 1px #fff3b3; }
+      .coin.tails::after { content:'★'; }
+      .coin.flipping { animation: coinflip .7s cubic-bezier(.38,.02,.7,.3); }
+      @keyframes coinflip { 0%{transform:rotateY(0) translateY(0)} 45%{transform:rotateY(540deg) translateY(-16px)} 100%{transform:rotateY(1080deg) translateY(0)} }
+      .event-title { margin-top:10px; color:#f4f9ff; font-size:17px; font-weight:700; letter-spacing:-.02em; }
+      .map-mark { position:relative; width:14px; height:14px; display:inline-block; margin-right:5px; border-radius:50% 50% 50% 0; background:conic-gradient(from 15deg,#ea4335 0 25%,#fbbc04 0 49%,#34a853 0 74%,#4285f4 0); transform:rotate(-45deg); vertical-align:-2px; }
+      .map-mark::after { content:''; position:absolute; inset:4px; border-radius:50%; background:#fff; }
+      .parking-card { position:relative; background:linear-gradient(135deg,rgba(45,95,153,.96),rgba(18,45,82,.96)); overflow:hidden; }
+      .parking-map { height:46px; margin:10px 88px 0 0; position:relative; overflow:hidden; border-radius:11px; background:linear-gradient(135deg,#5f8496 0 14%,#d3e5d4 14% 28%,#83a891 28% 42%,#c9d9dd 42% 55%,#6494a5 55% 70%,#d7e0c5 70%); }
+      .parking-map::before { content:''; position:absolute; width:140%; height:10px; top:18px; left:-20px; background:rgba(239,249,255,.8); transform:rotate(-13deg); box-shadow:0 -1px 0 rgba(74,103,120,.15), 0 1px 0 rgba(74,103,120,.15); }
+      .parking-pin { position:absolute; z-index:1; left:57%; top:11px; width:24px; height:24px; display:grid; place-items:center; border-radius:50% 50% 50% 0; background:#ffbe3d; color:#583705; font-size:12px; transform:rotate(-45deg); box-shadow:0 3px 8px rgba(14,31,51,.35); }
+      .parking-pin span { transform:rotate(45deg); }
+      .parking-card .row { padding-right:88px; }
+      .camera-action { position:absolute; z-index:3; right:14px; top:42px; width:78px; height:78px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border:1px solid rgba(224,245,255,.7); border-radius:18px; color:#f6fbff; background:linear-gradient(145deg,#83dcff,#2971e5); box-shadow:inset 0 1px rgba(255,255,255,.52),0 8px 18px rgba(2,21,61,.42); font:700 20px 'DM Sans',sans-serif; cursor:pointer; transition:transform .2s ease,filter .2s ease,box-shadow .2s ease; }
+      .camera-action.captured { background:linear-gradient(145deg,#78e7bd,#28a86e); box-shadow:inset 0 1px rgba(255,255,255,.52),0 0 0 5px rgba(104,236,178,.14),0 8px 18px rgba(2,21,61,.42); }
+      .parking-card.camera-flash::after { content:''; position:absolute; inset:0; background:rgba(222,247,255,.85); pointer-events:none; animation:flash .34s ease-out; }
+      @keyframes flash { from { opacity:.95; } to { opacity:0; } }
+      .camera-action svg { width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; }
+      .camera-action small { font:700 10px 'DM Sans',sans-serif; letter-spacing:.01em; }
+      .file-card { background:linear-gradient(135deg,#2d2562,#102a5e); border-color:rgba(189,176,255,.35); }
+      .file-result { display:flex; align-items:center; gap:10px; margin-top:10px; }
+      .pdf-icon { width:41px; height:48px; position:relative; display:grid; place-items:end center; padding-bottom:6px; border-radius:8px; background:linear-gradient(145deg,#ff7b88,#db3653); color:#fff; font:700 9px Arial,sans-serif; box-shadow:inset 0 1px rgba(255,255,255,.42),0 6px 12px rgba(4,8,30,.25); }
+      .pdf-icon::after { content:''; position:absolute; right:0; top:0; border-top:11px solid rgba(255,255,255,.72); border-left:11px solid transparent; }
+      .file-badges { display:flex; gap:5px; margin-top:6px; }
+      .file-badge { display:flex; align-items:center; gap:3px; padding:4px 6px; border-radius:999px; background:rgba(207,197,255,.15); color:#dcd5ff; font-size:9px; }
+      .event-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+      .event-pill { border:1px solid rgba(208,235,255,.23); border-radius:999px; padding:6px 9px; background:rgba(202,231,253,.10); color:#e1f0ff; font:500 10px 'DM Sans',sans-serif; }
+      .event-pill b { color:#9fd1ff; font-weight:500; }
+      .shapeshift-panel { background: linear-gradient(135deg, #10233a, #081626); border-color: rgba(89, 146, 255, .55); }
+      .habit-name { margin-top:10px; color:#f5f9ff; font-size:14px; }
+      .days { display:flex; gap:6px; margin-top:10px; }
+      .day { width:25px; height:25px; display:grid; place-items:center; border:1px solid rgba(204,229,249,.25); border-radius:50%; color:#dceafa; font-size:9px; cursor:pointer; transition:transform .18s ease,background .18s ease,color .18s ease; }
+      .day.active { background:#9fd1ff; border-color:#9fd1ff; color:#071727; font-weight:700; }
+      .frequency { margin-left:auto; border:1px dashed rgba(201,228,249,.38); border-radius:999px; padding:6px 9px; color:#bed7ed; font-size:10px; }
+      .goal-progress { display:flex; justify-content:space-between; align-items:end; margin-top:10px; }
+      .goal-percent { font-size:29px; font-weight:700; letter-spacing:-.06em; }
+      .progress-rail { height:7px; margin-top:10px; overflow:hidden; border-radius:999px; background:rgba(213,235,253,.11); }
+      .progress-fill { width:0%; height:100%; background:#9fd1ff; }
+      .thinking-panel { min-height:149px; }
+      .thinking-title { display:flex; align-items:center; gap:7px; color:#d5e9fb; font-size:12px; }
+      .thinking-dots { display:inline-flex; gap:3px; }
+      .thinking-dots i { width:4px; height:4px; border-radius:50%; background:#9fd1ff; animation: pulse 1.2s infinite ease-in-out; }
+      .thinking-dots i:nth-child(2){animation-delay:.15s}.thinking-dots i:nth-child(3){animation-delay:.3s}
+      .thought { margin:10px 0 0; color:#a8c4d9; font-size:10px; line-height:1.4; opacity:0; animation: reveal .45s forwards; }
+      .thought.two{animation-delay:.65s}.thought.three{animation-delay:1.2s}.step-summary{margin-top:10px;opacity:0;animation:reveal .45s 1.75s forwards}.step-summary .action{margin-top:7px}
+      @keyframes pulse { 0%,80%,100% { transform:scale(.65);opacity:.38 } 40% { transform:scale(1);opacity:1 } }
+      @keyframes reveal { to { opacity:1 } }
+      @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+      .label { color: #8eb5d4; font-size: 10px; letter-spacing:.11em; text-transform:uppercase; margin: 0 0 7px; }
+      .more-title { grid-column: 1 / -1; margin: 12px 0 -4px; color: #d6eaff; font-size: 17px; }
+      .more-title span { display: block; margin-top: 4px; color: #8eacc4; font-size: 12px; font-weight: 400; }
+      @media (max-width: 920px) { .gallery { grid-template-columns: repeat(2, minmax(260px, 1fr)); } }
+      @media (max-width: 600px) { .page { padding: 38px 16px 60px; } .gallery { grid-template-columns: 1fr; } .phone { min-height: 442px; } }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="intro">
+        <div class="eyebrow">SearchShift-Jev · compact card study</div>
+        <h1>One small surface.<br />A clear next action.</h1>
+        <p>Review the shape and information density of each classifier result before it is wired to JEV or device actions. Every card stays inside the same compact glass launcher surface.</p>
+      </section>
+
+      <section class="gallery" style="margin-top:44px">
+        <h2 class="more-title">Intent card library<span>All use the same compact input → task → search-with-apps rhythm.</span></h2>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> buy milk, eggs and coffee</div><div class="intent"><div class="kind"><strong>☑&nbsp; Checklist</strong><span>3 items</span></div><div class="checklist"><span class="check-item">Milk</span><span class="check-item">Eggs</span><span class="check-item">Coffee</span></div><div class="compact-action-row"><button class="action">Add list</button><button class="action ghost">Edit</button></div></div><div class="search-with"><a class="source" aria-label="Search shopping list on Google" href="https://www.google.com/search?q=buy+milk+eggs+and+coffee"><span class="google">G</span></a><a class="source" aria-label="Search shopping list on Play Store" href="https://play.google.com/store/search?q=buy+milk+eggs+and+coffee&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search shopping list on YouTube" href="https://www.youtube.com/results?search_query=buy+milk+eggs+and+coffee"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>To-do list</h2><p>Items stack vertically for a more natural scan-and-check interaction.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> calories in a chicken burrito</div><div class="intent"><div class="kind"><strong>◒&nbsp; Calorie estimate</strong><span>needs answer</span></div><div class="row" style="margin-top:10px"><div><div class="split-value">≈ 700 cal</div><div class="mini">Chicken burrito · estimate</div></div><button class="action">Refine</button></div></div><div class="search-with"><a class="source" aria-label="Search calories on Google" href="https://www.google.com/search?q=calories+in+a+chicken+burrito"><span class="google">G</span></a><a class="source" aria-label="Search calories on Play Store" href="https://play.google.com/store/search?q=calories+in+a+chicken+burrito&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search calories on YouTube" href="https://www.youtube.com/results?search_query=calories+in+a+chicken+burrito"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Calorie calculator</h2><p>An answer card that makes uncertainty visible and offers refinement, not a false precise nutrition claim.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> alarm at 6:30 tomorrow</div><div class="intent"><div class="kind"><strong>◷&nbsp; Alarm</strong><span>new</span></div><div class="row" style="margin-top:10px"><div class="split-value">6:30 AM</div><div class="time-pills"><button class="time-pill">Tomorrow <span>⌄</span></button></div><button class="action">Set</button></div></div><div class="search-with"><a class="source" aria-label="Search alarm on Google" href="https://www.google.com/search?q=alarm+at+6%3A30+tomorrow"><span class="google">G</span></a><a class="source" aria-label="Search alarm on Play Store" href="https://play.google.com/store/search?q=alarm+at+6%3A30+tomorrow&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search alarm on YouTube" href="https://www.youtube.com/results?search_query=alarm+at+6%3A30+tomorrow"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Alarm</h2><p>The time is dominant, while repeat rules stay hidden until the user asks for them.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> turn on flashlight</div><div class="intent"><div class="kind"><strong>✦&nbsp; Device control</strong><span>quick setting</span></div><div class="row" style="margin-top:10px"><span class="device-icon">🔦</span><div style="flex:1"><strong style="font-size:14px">Flashlight</strong><div class="mini" style="margin-top:3px">Off</div></div><button class="action">Turn on</button></div></div><div class="search-with"><a class="source" aria-label="Search flashlight on Google" href="https://www.google.com/search?q=turn+on+flashlight"><span class="google">G</span></a><a class="source" aria-label="Search flashlight on Play Store" href="https://play.google.com/store/search?q=turn+on+flashlight&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search flashlight on YouTube" href="https://www.youtube.com/results?search_query=turn+on+flashlight"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Flashlight / hotspot</h2><p>A large device-specific icon makes the control recognizable before reading it.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> time in tokyo</div><div class="intent"><div class="kind"><strong>◴&nbsp; Time zone</strong><span>comparison</span></div><div class="row" style="margin-top:10px"><div><div class="mini">Chicago</div><strong>10:14 AM</strong></div><div class="timezone-arrow"><div class="timezone-diff">+14 hours</div><div class="timezone-line"></div></div><div><div class="mini" style="text-align:right">Tokyo</div><strong>12:14 AM</strong></div></div></div><div class="search-with"><a class="source" aria-label="Search Tokyo time on Google" href="https://www.google.com/search?q=time+in+Tokyo"><span class="google">G</span></a><a class="source" aria-label="Search Tokyo time on Play Store" href="https://play.google.com/store/search?q=time+in+Tokyo&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Tokyo time on YouTube" href="https://www.youtube.com/results?search_query=time+in+Tokyo"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Time in another place</h2><p>A longer visual arrow carries the time difference while both local times stay legible.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> days until christmas</div><div class="intent"><div class="kind"><strong>◌&nbsp; Countdown</strong><span>Dec 25</span></div><div class="row" style="margin-top:10px"><div class="value">93</div><div style="flex:1"><strong style="font-size:14px">days to Christmas</strong><div class="mini" style="margin-top:3px">Friday, December 25</div></div></div></div><div class="search-with"><a class="source" aria-label="Search Christmas countdown on Google" href="https://www.google.com/search?q=days+until+Christmas"><span class="google">G</span></a><a class="source" aria-label="Search Christmas countdown on Play Store" href="https://play.google.com/store/search?q=days+until+Christmas&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Christmas countdown on YouTube" href="https://www.youtube.com/results?search_query=days+until+Christmas"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Countdown</h2><p>Use a large answer with the target date as the only supporting detail.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> heads or tails</div><div class="intent"><div class="kind"><strong>◉&nbsp; Quick choice</strong><span>random</span></div><div class="row" style="margin-top:10px"><div class="coin heads" aria-label="Heads coin"></div><div style="flex:1"><strong class="coin-result" style="font-size:14px">Heads</strong><div class="mini" style="margin-top:3px">A shiny coin toss</div></div><button class="action flip-coin">Flip</button></div></div><div class="search-with"><a class="source" aria-label="Search heads or tails on Google" href="https://www.google.com/search?q=heads+or+tails"><span class="google">G</span></a><a class="source" aria-label="Search heads or tails on Play Store" href="https://play.google.com/store/search?q=heads+or+tails&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search heads or tails on YouTube" href="https://www.youtube.com/results?search_query=heads+or+tails"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Heads or tails</h2><p>A tactile coin flips and visibly lands on heads or tails.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> directions to Barton Springs</div><div class="intent"><div class="kind"><strong>⌖&nbsp; Directions</strong><span>Austin</span></div><div class="row" style="margin-top:10px"><div><strong style="font-size:14px">Barton Springs Pool</strong><div class="mini" style="margin-top:3px">2.8 mi · 11 min</div></div><button class="action"><span class="map-mark"></span>Maps</button></div></div><div class="search-with"><a class="source" aria-label="Search directions on Google" href="https://www.google.com/search?q=directions+to+Barton+Springs"><span class="google">G</span></a><a class="source" aria-label="Search directions on Play Store" href="https://play.google.com/store/search?q=directions+to+Barton+Springs&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search directions on YouTube" href="https://www.youtube.com/results?search_query=directions+to+Barton+Springs"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Directions</h2><p>Maps branding makes the route hand-off obvious without adding a map preview.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> order ramen tonight</div><div class="intent doordash"><div class="kind"><strong>⌑&nbsp; Order food</strong><span>nearby</span></div><div class="row" style="margin-top:10px"><span class="food-icon">🍜</span><div style="flex:1"><div class="mini" style="margin-bottom:2px">Restaurant</div><strong style="font-size:14px">Ramen Tatsu-ya</strong><div class="mini" style="margin-top:3px">4.7 ★ · Opens at 5 PM</div></div><button class="action" style="background:#fff;color:#e63211">DoorDash</button></div></div><div class="search-with"><a class="source" aria-label="Search ramen on Google" href="https://www.google.com/search?q=order+ramen+tonight"><span class="google">G</span></a><a class="source" aria-label="Search ramen on Play Store" href="https://play.google.com/store/search?q=order+ramen+tonight&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search ramen on YouTube" href="https://www.youtube.com/results?search_query=order+ramen+tonight"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Food order</h2><p>Food imagery, an explicit restaurant label, and the DoorDash hand-off make the action legible at a glance.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> note: ask dentist about whitening</div><div class="intent"><div class="kind"><strong>▤&nbsp; New note</strong><span>Obsidian</span></div><div class="note-title">Ask dentist about whitening</div><div class="note-body">Ask about whitening options, cost, and whether sensitivity is expected.</div><div class="compact-action-row"><button class="action">Save note</button></div></div><div class="search-with"><a class="source" aria-label="Search note on Google" href="https://www.google.com/search?q=ask+dentist+about+whitening"><span class="google">G</span></a><a class="source" aria-label="Search note on Play Store" href="https://play.google.com/store/search?q=ask+dentist+about+whitening&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search note on YouTube" href="https://www.youtube.com/results?search_query=ask+dentist+about+whitening"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Note</h2><p>The launcher captures a title and short body; a linked notes app owns further editing and organization.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> lunch with Priya Friday at 1</div><div class="intent"><div class="kind"><strong>□&nbsp; Event</strong><span>calendar</span></div><div class="event-title">Lunch</div><div class="event-pills"><button class="event-pill"><b>With</b>&nbsp; Priya</button><button class="event-pill"><b>Day</b>&nbsp; Friday</button><button class="event-pill"><b>Time</b>&nbsp; 1:00 PM</button></div><div class="compact-action-row"><button class="action">Add to calendar</button></div></div><div class="search-with"><a class="source" aria-label="Search lunch with Priya on Google" href="https://www.google.com/search?q=lunch+with+Priya+Friday+at+1"><span class="google">G</span></a><a class="source" aria-label="Search lunch with Priya on Play Store" href="https://play.google.com/store/search?q=lunch+with+Priya+Friday+at+1&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search lunch with Priya on YouTube" href="https://www.youtube.com/results?search_query=lunch+with+Priya+Friday+at+1"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Event</h2><p>The event title leads; person, day, and time remain compact edit-style pills.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> gym three times a week</div><div class="intent shapeshift-panel"><div class="kind"><strong>☼&nbsp; Habit</strong><span>new</span></div><div class="habit-name">Gym</div><div class="row" style="margin-top:9px"><div class="days"><span class="day active">M</span><span class="day">T</span><span class="day active">W</span><span class="day">T</span><span class="day active">F</span><span class="day">S</span><span class="day">S</span></div><span class="frequency">＋ Add how often</span></div><div class="row" style="margin-top:11px"><span class="mini">Esc&nbsp; to cancel</span><button class="action">Save habit ↵</button></div></div><div class="search-with"><a class="source" aria-label="Search gym habit on Google" href="https://www.google.com/search?q=gym+three+times+a+week"><span class="google">G</span></a><a class="source" aria-label="Search gym habit on Play Store" href="https://play.google.com/store/search?q=gym+three+times+a+week&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search gym habit on YouTube" href="https://www.youtube.com/results?search_query=gym+three+times+a+week"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Habit</h2><p>Adapted from the Shapeshift pattern: name, cadence, day selection, and a quiet save affordance.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> read 12 books this year</div><div class="intent shapeshift-panel"><div class="kind"><strong>◎&nbsp; Goal</strong><span>annual</span></div><div class="goal-progress"><div><strong style="font-size:14px">Read 12 books</strong><div class="mini" style="margin-top:3px">0 of 12 books</div></div><div class="goal-percent">0%</div></div><div class="progress-rail"><div class="progress-fill"></div></div><div class="row" style="margin-top:10px"><span class="mini" style="font-size:16px">− &nbsp;&nbsp; +</span><button class="action">Save goal ↵</button></div></div><div class="search-with"><a class="source" aria-label="Search reading goal on Google" href="https://www.google.com/search?q=read+12+books+this+year"><span class="google">G</span></a><a class="source" aria-label="Search reading goal on Play Store" href="https://play.google.com/store/search?q=read+12+books+this+year&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search reading goal on YouTube" href="https://www.youtube.com/results?search_query=read+12+books+this+year"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Goal</h2><p>Adapted from the Shapeshift pattern: a named target, an honest progress state, and small adjustment controls.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> find my last mechanic oil change</div><div class="intent thinking-panel"><div class="thinking-title"><span class="thinking-dots"><i></i><i></i><i></i></span> Thinking</div><p class="thought">Search Gmail for “oil change” and “mechanic”.</p><p class="thought two">Search text messages for “oil change”.</p><p class="thought three">Surface the matching receipt and conversation.</p><div class="step-summary"><div class="mini">Summary · Search 2 approved sources</div><button class="action">Review search</button></div></div><div class="search-with"><a class="source" aria-label="Search oil change on Google" href="https://www.google.com/search?q=find+my+last+mechanic+oil+change"><span class="google">G</span></a><a class="source" aria-label="Search oil change apps on Play Store" href="https://play.google.com/store/search?q=oil+change&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search oil change on YouTube" href="https://www.youtube.com/results?search_query=find+my+last+mechanic+oil+change"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Suggested steps</h2><p>A brief animated plan declares the two sources it would search, then asks the user to review before any private-data action.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> add Jamie 512-555-0142</div><div class="intent"><div class="kind"><strong>＋&nbsp; New contact</strong><span>contacts</span></div><div class="row" style="margin-top:10px"><div><strong style="font-size:14px">Jamie</strong><div class="mini" style="margin-top:3px">512-555-0142</div></div><button class="action">Add</button></div></div><div class="search-with"><a class="source" aria-label="Search Jamie contact on Google" href="https://www.google.com/search?q=Jamie+512-555-0142"><span class="google">G</span></a><a class="source" aria-label="Search contacts on Play Store" href="https://play.google.com/store/search?q=contacts&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search contacts on YouTube" href="https://www.youtube.com/results?search_query=add+new+contact"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>New contact</h2><p>Recognize a name and number, then make the save step explicit.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> save this article for later</div><div class="intent"><div class="kind"><strong>↗&nbsp; Save link</strong><span>web</span></div><div class="row" style="margin-top:10px"><span class="utility-icon link">🔗</span><div style="flex:1;min-width:0"><div class="utility-title">The Science of Sleep</div><div class="mini" style="margin-top:3px">nytimes.com</div><span class="utility-tag">Read later</span></div><button class="action">Save</button></div></div><div class="search-with"><a class="source" aria-label="Search saved link on Google" href="https://www.google.com/search?q=The+Science+of+Sleep"><span class="google">G</span></a><a class="source" aria-label="Search reading apps on Play Store" href="https://play.google.com/store/search?q=read+later&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search link topic on YouTube" href="https://www.youtube.com/results?search_query=The+Science+of+Sleep"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Save link</h2><p>Recognize a pasted URL or article request, preview its destination, and save it to a chosen reading list.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> 5 feet 11 inches in cm</div><div class="intent"><div class="kind"><strong>⌗&nbsp; Unit converter</strong><span>instant</span></div><div class="row" style="margin-top:10px"><span class="utility-icon units">📐</span><div style="flex:1"><div class="conversion" data-converter="unit"><span class="conversion-value">5′ 11″</span><span class="conversion-arrow">→</span><span class="conversion-value">180 cm</span></div><div class="mini" style="margin-top:5px">Length · exact conversion</div></div><button class="action" data-swap>Swap</button></div></div><div class="search-with"><a class="source" aria-label="Search unit conversion on Google" href="https://www.google.com/search?q=5+feet+11+inches+in+cm"><span class="google">G</span></a><a class="source" aria-label="Search unit converter on Play Store" href="https://play.google.com/store/search?q=unit+converter&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search conversion on YouTube" href="https://www.youtube.com/results?search_query=5+feet+11+inches+in+cm"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Unit converter</h2><p>Keep source and target values equally editable, then let a single swap button reverse the direction.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> 80 dollars to euros</div><div class="intent"><div class="kind"><strong>¤&nbsp; Currency converter</strong><span>rate</span></div><div class="row" style="margin-top:10px"><span class="utility-icon currency">€</span><div style="flex:1"><div class="conversion" data-converter="currency"><span class="conversion-value">$80.00</span><span class="conversion-arrow">→</span><span class="conversion-value">€73.64</span></div><div class="mini" style="margin-top:5px">EUR · rate refreshed when opened</div></div><button class="action" data-swap>Swap</button></div></div><div class="search-with"><a class="source" aria-label="Search currency conversion on Google" href="https://www.google.com/search?q=80+dollars+to+euros"><span class="google">G</span></a><a class="source" aria-label="Search currency apps on Play Store" href="https://play.google.com/store/search?q=currency+converter&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search euro conversion on YouTube" href="https://www.youtube.com/results?search_query=80+dollars+to+euros"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Currency converter</h2><p>A bright money marker differentiates it from unit conversion while retaining the same fast, legible anatomy.</p></div></article>
+
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> start a 12 minute pasta timer</div><div class="intent"><div class="kind"><strong>◷&nbsp; Timer</strong><span>ready</span></div><div class="row" style="margin-top:10px"><div class="timer-face" data-countdown data-seconds="720">12:00</div><span class="utility-icon timer-icon">⏱</span><div style="flex:1"><div class="utility-title">Pasta timer</div><div class="mini" style="margin-top:3px">Notify when finished</div></div><button class="action" data-timer-toggle>Start</button></div></div><div class="search-with"><a class="source" aria-label="Search pasta timer on Google" href="https://www.google.com/search?q=12+minute+pasta+timer"><span class="google">G</span></a><a class="source" aria-label="Search timer apps on Play Store" href="https://play.google.com/store/search?q=timer&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search pasta timer on YouTube" href="https://www.youtube.com/results?search_query=12+minute+pasta+timer"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Timer / countdown</h2><p>A named countdown makes one-off cooking, laundry, and parking timers feel more deliberate than an alarm.</p></div></article>
+      </section>
+      <div class="rule"></div>
+      <p class="review-note">Each frame shows a single search state. App results take the first row when a name is recognized; otherwise the intent card starts directly below the field.</p>
+
+      <section class="gallery">
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> weather in houston</div><div class="apps"><span class="app chrome"></span><span class="app spotify">◔</span><span class="app obsidian">◆</span></div><div class="intent"><div class="kind"><strong>☼&nbsp; Weather</strong><span>sample</span></div><div class="weather-main"><div class="weather-left"><span class="value">32°</span><span class="sun">☀</span></div><div class="weather-right"><span>6 PM · Houston</span><span>10% chance of rain</span></div></div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search weather in Houston on Google" href="https://www.google.com/search?q=weather+in+Houston"><span class="google">G</span></a><a class="source" aria-label="Search weather in Houston on Play Store" href="https://play.google.com/store/search?q=weather+in+Houston&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search weather in Houston on YouTube" href="https://www.youtube.com/results?search_query=weather+in+Houston"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Weather</h2><p>One-line forecast: temperature, condition, place, and likelihood of rain. No hourly strip until the user opens it.</p></div>
+        </article>
+
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> spotify</div><div class="apps"><span class="app spotify">◔</span></div><div class="intent"><div class="kind"><strong>◔&nbsp; Spotify</strong><span>app match</span></div><div class="row" style="margin-top:10px"><span class="music-art">DREAMS</span><div style="flex:1"><strong style="font-size:14px">Dreams</strong><div class="mini" style="margin-top:3px">Fleetwood Mac</div></div><button class="action">Play</button></div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search Spotify on Google" href="https://www.google.com/search?q=Spotify"><span class="google">G</span></a><a class="source" aria-label="Search Spotify on Play Store" href="https://play.google.com/store/search?q=Spotify&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Spotify on YouTube" href="https://www.youtube.com/results?search_query=Spotify"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Music</h2><p>App match stays first. A secondary action card uses title, artist, and a single clear control.</p></div>
+        </article>
+
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> text Maya I'm outside</div><div class="intent"><div class="kind"><strong>✦&nbsp; Message</strong><span>contact</span></div><div class="row" style="margin-top:10px"><span class="contact">MC</span><div style="flex:1"><strong style="font-size:14px">Maya Chen</strong><div class="mini" style="margin-top:3px">I'm outside</div></div><button class="action">Text</button></div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search text Maya I'm outside on Google" href="https://www.google.com/search?q=text+Maya+I%27m+outside"><span class="google">G</span></a><a class="source" aria-label="Search text Maya I'm outside on Play Store" href="https://play.google.com/store/search?q=text+Maya+I%27m+outside&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search text Maya I'm outside on YouTube" href="https://www.youtube.com/results?search_query=text+Maya+I%27m+outside"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Contact</h2><p>Contact identity plus the exact message preview. The action is explicit instead of suggesting a message was sent.</p></div>
+        </article>
+
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> remind me to water plants at 6</div><div class="intent"><div class="kind"><strong>◷&nbsp; Reminder</strong><span>new</span></div><div class="field" style="margin-top:10px">Water the plants</div><div class="row" style="margin-top:10px"><div class="time-pills"><button class="time-pill">Today <span>⌄</span></button><button class="time-pill">6:00 PM <span>⌄</span></button></div><button class="action">Save</button></div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search reminder query on Google" href="https://www.google.com/search?q=remind+me+to+water+plants+at+6"><span class="google">G</span></a><a class="source" aria-label="Search reminder query on Play Store" href="https://play.google.com/store/search?q=remind+me+to+water+plants+at+6&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search reminder query on YouTube" href="https://www.youtube.com/results?search_query=remind+me+to+water+plants+at+6"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Reminder</h2><p>Editable title, a quiet time summary, and a single save control. No calendar editor in the launcher.</p></div>
+        </article>
+
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> focus for 25 minutes</div><div class="intent"><div class="kind"><strong>◷&nbsp; Focus timer</strong><span>25 min</span></div><div class="timer"><div class="clock" data-focus-clock>25:00</div><div><strong style="font-size:14px">Make room for one thing.</strong><div class="mini" style="margin-top:4px">Starts only when you choose.</div><button class="action" data-focus-toggle style="margin-top:9px">Start focus</button></div></div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search focus timer on Google" href="https://www.google.com/search?q=focus+for+25+minutes"><span class="google">G</span></a><a class="source" aria-label="Search focus timer on Play Store" href="https://play.google.com/store/search?q=focus+for+25+minutes&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search focus timer on YouTube" href="https://www.youtube.com/results?search_query=focus+for+25+minutes"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Focus timer</h2><p>Compact by default: duration and commitment. The expanding circular timer belongs only to the active state.</p></div>
+        </article>
+
+        <article class="review-card">
+          <div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> split $86.40 by 4</div><div class="intent"><div class="kind"><strong>÷&nbsp; Split bill</strong><span>equal split</span></div><div class="row" style="margin-top:11px"><div><div class="label">Each person pays</div><div class="split-value">$21.60</div></div><div class="stepper"><span class="step">−</span><span>4</span><span class="step">+</span></div></div><div class="divider"></div><div class="mini">$86.40 total · tip not included</div></div><div class="search-with" aria-label="Search this query in apps"><a class="source" aria-label="Search split bill on Google" href="https://www.google.com/search?q=split+%2486.40+by+4"><span class="google">G</span></a><a class="source" aria-label="Search split bill on Play Store" href="https://play.google.com/store/search?q=split+%2486.40+by+4&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search split bill on YouTube" href="https://www.youtube.com/results?search_query=split+%2486.40+by+4"><span class="youtube">▶</span></a></div></div></div>
+          <div class="review-copy"><h2>Split bill</h2><p>Lead with the answer, then show the adjustable people count. Total and assumptions stay as support.</p></div>
+        </article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> reserve dinner Friday at 7</div><div class="intent"><div class="kind"><strong>⌑&nbsp; Reservation</strong><span>Friday</span></div><div class="row" style="margin-top:10px"><div><strong style="font-size:14px">Uchi</strong><div class="mini" style="margin-top:3px">7:00 PM · 2 people</div></div><button class="action">Reserve</button></div></div><div class="search-with"><a class="source" aria-label="Search reservation on Google" href="https://www.google.com/search?q=reserve+dinner+Friday+at+7"><span class="google">G</span></a><a class="source" aria-label="Search reservation on Play Store" href="https://play.google.com/store/search?q=reserve+dinner+Friday+at+7&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search reservation on YouTube" href="https://www.youtube.com/results?search_query=reserve+dinner+Friday+at+7"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Reservation</h2><p>Restaurant, time, party size, and one clear booking hand-off.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> Barcelona vs Sevilla</div><div class="intent"><div class="kind"><strong>◉&nbsp; Sports result</strong><span>full time</span></div><div class="row" style="margin-top:10px"><strong style="font-size:14px">Sevilla</strong><div class="split-value">1 – 3</div><strong style="font-size:14px">Barcelona</strong></div></div><div class="search-with"><a class="source" aria-label="Search Barcelona Sevilla on Google" href="https://www.google.com/search?q=Barcelona+vs+Sevilla"><span class="google">G</span></a><a class="source" aria-label="Search Barcelona Sevilla on Play Store" href="https://play.google.com/store/search?q=Barcelona+vs+Sevilla&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Barcelona Sevilla on YouTube" href="https://www.youtube.com/results?search_query=Barcelona+vs+Sevilla"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Sports result</h2><p>Team names, final score, and status fit without turning the launcher into a live-score dashboard.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> minecraft diamond</div><div class="intent"><div class="kind"><strong>●&nbsp; Color</strong><span>matched</span></div><div class="row" style="margin-top:10px"><span style="width:45px;height:45px;border-radius:12px;background:#4AEDD9;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)"></span><div style="flex:1"><strong style="font-size:14px">Minecraft diamond</strong><div class="mini" style="margin-top:3px">#4AEDD9</div></div><button class="action">Copy</button></div></div><div class="search-with"><a class="source" aria-label="Search Minecraft diamond on Google" href="https://www.google.com/search?q=Minecraft+diamond"><span class="google">G</span></a><a class="source" aria-label="Search Minecraft diamond on Play Store" href="https://play.google.com/store/search?q=Minecraft+diamond&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Minecraft diamond on YouTube" href="https://www.youtube.com/results?search_query=Minecraft+diamond"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Color</h2><p>One visual swatch, a readable hex value, and a copy action.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> 18% of 3450</div><div class="intent"><div class="kind"><strong>÷&nbsp; Calculate</strong><span>result</span></div><div class="row" style="margin-top:10px"><div><div class="split-value">621</div><div class="mini">18% of 3,450</div></div><button class="action">Copy</button></div></div><div class="search-with"><a class="source" aria-label="Search calculation on Google" href="https://www.google.com/search?q=18%25+of+3450"><span class="google">G</span></a><a class="source" aria-label="Search calculator on Play Store" href="https://play.google.com/store/search?q=calculator&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search calculation on YouTube" href="https://www.youtube.com/results?search_query=18%25+of+3450"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Calculate</h2><p>Like Shapeshift, the model identifies the card and deterministic code performs the math.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> turn off bluetooth when I get home</div><div class="intent"><div class="kind"><strong>↳&nbsp; Automation</strong><span>draft</span></div><div class="mini" style="margin-top:10px">When: arrive home &nbsp; → &nbsp; Then: turn off Bluetooth</div><div class="compact-action-row"><button class="action">Review setup</button></div></div><div class="search-with"><a class="source" aria-label="Search Bluetooth automation on Google" href="https://www.google.com/search?q=turn+off+Bluetooth+when+I+get+home"><span class="google">G</span></a><a class="source" aria-label="Search Bluetooth automation on Play Store" href="https://play.google.com/store/search?q=Bluetooth+automation&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search Bluetooth automation on YouTube" href="https://www.youtube.com/results?search_query=turn+off+Bluetooth+when+I+get+home"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Automation</h2><p>Show the trigger and effect plainly, then hand off to the system’s automation setup for permissioned review.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> save my parking</div><div class="intent parking-card"><div class="kind"><strong>⌖&nbsp; Save parking</strong><span>current spot</span></div><div class="parking-map"><span class="parking-pin"><span>P</span></span></div><div class="row" style="margin-top:9px"><div class="field" style="flex:1">Level 2 · Row C</div></div><button class="camera-action" aria-label="Capture parking photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.4-2h7.2L17 7h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3.2"/></svg><small>Camera</small></button></div><div class="search-with"><a class="source" aria-label="Search parking on Google" href="https://www.google.com/search?q=save+my+parking"><span class="google">G</span></a><a class="source" aria-label="Search parking apps on Play Store" href="https://play.google.com/store/search?q=save+my+parking&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search parking on YouTube" href="https://www.youtube.com/results?search_query=save+my+parking"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Save parking</h2><p>A playful location pin gives the saved spot a home, while an editable location field and large camera control capture the useful details.</p></div></article>
+        <article class="review-card"><div class="phone"><div class="surface"><div class="search"><span class="glass">⌕</span> find pdf of a workout plan I downloaded last week</div><div class="intent file-card"><div class="kind"><strong>⌕&nbsp; Find file</strong><span>local search</span></div><div class="file-result"><span class="pdf-icon">PDF</span><div style="min-width:0"><strong style="font-size:13px">4-week strength plan.pdf</strong><div class="mini" style="margin-top:3px">Downloaded last Tuesday</div><div class="file-badges"><span class="file-badge">⌂ Downloads</span><span class="file-badge">✓ PDF</span></div></div><button class="action">Open</button></div></div><div class="search-with"><a class="source" aria-label="Search workout plan on Google" href="https://www.google.com/search?q=workout+plan+pdf"><span class="google">G</span></a><a class="source" aria-label="Search files apps on Play Store" href="https://play.google.com/store/search?q=file+search&amp;c=apps"><span class="play"></span></a><a class="source" aria-label="Search workout plan on YouTube" href="https://www.youtube.com/results?search_query=workout+plan"><span class="youtube">▶</span></a></div></div></div><div class="review-copy"><h2>Find file</h2><p>A colorful file result makes type, location, and recency scannable before the user opens it.</p></div></article>
+      </section>
+    </main>
+    <script>
+      // The gallery is a local interaction prototype: no device action or network call is simulated as complete.
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      document.body.append(toast);
+      let toastTimeout;
+
+      const announce = (message) => {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimeout);
+        toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 1600);
+      };
+
+      const pulse = (element) => {
+        const card = element.closest('.intent');
+        if (!card) return;
+        card.classList.remove('is-working');
+        void card.offsetWidth;
+        card.classList.add('is-working');
+      };
+
+      const complete = (button, label) => {
+        pulse(button);
+        button.textContent = label;
+        button.classList.add('is-complete');
+        button.closest('.intent')?.classList.add('is-saved');
+        announce(label);
+      };
+
+      document.querySelectorAll('.check-item').forEach((item) => {
+        item.tabIndex = 0;
+        item.setAttribute('role', 'checkbox');
+        item.setAttribute('aria-checked', 'false');
+        const toggle = () => {
+          const checked = item.classList.toggle('checked');
+          item.setAttribute('aria-checked', String(checked));
+          pulse(item);
+        };
+        item.addEventListener('click', toggle);
+        item.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+        });
+      });
+
+      document.querySelectorAll('.field, .note-title, .note-body').forEach((field) => {
+        field.contentEditable = 'true';
+        field.spellcheck = true;
+        field.addEventListener('focus', () => field.closest('.intent')?.classList.add('is-working'));
+      });
+
+      document.querySelectorAll('.time-pill').forEach((pill) => {
+        pill.addEventListener('click', () => {
+          const isDate = /today|tomorrow|monday/i.test(pill.textContent);
+          const options = isDate ? ['Today', 'Tomorrow', 'Monday'] : ['6:00 PM', '7:00 PM', '8:00 PM'];
+          const current = options.findIndex((option) => pill.textContent.includes(option));
+          pill.innerHTML = `${options[(current + 1) % options.length]} <span>⌄</span>`;
+          pulse(pill);
+        });
+      });
+
+      document.querySelectorAll('.event-pill, .day').forEach((control) => {
+        control.addEventListener('click', () => {
+          control.classList.toggle('active');
+          pulse(control);
+        });
+      });
+
+      document.querySelectorAll('[data-swap]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const conversion = button.closest('.row').querySelector('.conversion');
+          const values = conversion.querySelectorAll('.conversion-value');
+          [values[0].textContent, values[1].textContent] = [values[1].textContent, values[0].textContent];
+          conversion.querySelector('.conversion-arrow').textContent = conversion.querySelector('.conversion-arrow').textContent === '→' ? '←' : '→';
+          pulse(button);
+          announce('Conversion swapped');
+        });
+      });
+
+      const timers = new WeakMap();
+      const formatTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+      document.querySelectorAll('[data-timer-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const face = button.closest('.intent').querySelector('[data-countdown]');
+          const activeTimer = timers.get(face);
+          if (activeTimer) {
+            window.clearInterval(activeTimer);
+            timers.delete(face);
+            face.classList.remove('running');
+            button.textContent = 'Resume';
+            announce('Timer paused');
+            return;
+          }
+          let seconds = Number(face.dataset.seconds);
+          face.classList.add('running');
+          button.textContent = 'Pause';
+          pulse(button);
+          const interval = window.setInterval(() => {
+            seconds -= 1;
+            face.dataset.seconds = String(seconds);
+            face.textContent = formatTime(Math.max(seconds, 0));
+            if (seconds <= 0) {
+              window.clearInterval(interval);
+              timers.delete(face);
+              face.classList.remove('running');
+              button.textContent = 'Done';
+              complete(button, 'Done');
+            }
+          }, 1000);
+          timers.set(face, interval);
+          announce('Timer started');
+        });
+      });
+
+      document.querySelectorAll('.camera-action').forEach((button) => {
+        button.addEventListener('click', () => {
+          const card = button.closest('.parking-card');
+          card.classList.remove('camera-flash');
+          void card.offsetWidth;
+          card.classList.add('camera-flash');
+          button.classList.add('captured');
+          button.querySelector('small').textContent = 'Captured';
+          announce('Parking photo captured');
+        });
+      });
+
+      document.querySelectorAll('.flip-coin').forEach((button) => {
+        button.addEventListener('click', () => {
+          const card = button.closest('.intent');
+          const coin = card.querySelector('.coin');
+          const result = card.querySelector('.coin-result');
+          if (coin.classList.contains('flipping')) return;
+          coin.classList.add('flipping');
+          window.setTimeout(() => {
+            const isHeads = coin.classList.toggle('tails');
+            coin.classList.toggle('heads', !isHeads);
+            result.textContent = isHeads ? 'Tails' : 'Heads';
+            coin.setAttribute('aria-label', result.textContent + ' coin');
+            coin.classList.remove('flipping');
+          }, 700);
+        });
+      });
+
+      document.querySelectorAll('.stepper').forEach((stepper) => {
+        const update = (delta) => {
+          const count = stepper.querySelector('span:nth-child(2)');
+          const next = Math.max(2, Number(count.textContent) + delta);
+          count.textContent = String(next);
+          const card = stepper.closest('.intent');
+          const total = Number(card.textContent.match(/\$([\d.]+) total/)?.[1] ?? 0);
+          card.querySelector('.split-value').textContent = `$${(total / next).toFixed(2)}`;
+          pulse(stepper);
+        };
+        stepper.querySelector('span:first-child').addEventListener('click', () => update(-1));
+        stepper.querySelector('span:last-child').addEventListener('click', () => update(1));
+      });
+
+      document.querySelectorAll('[data-focus-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const clock = button.closest('.intent').querySelector('[data-focus-clock]');
+          const running = clock.classList.toggle('running');
+          button.textContent = running ? 'Pause focus' : 'Resume focus';
+          pulse(button);
+          announce(running ? 'Focus session started' : 'Focus session paused');
+        });
+      });
+
+      document.querySelectorAll('.action').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (button.matches('[data-swap], [data-timer-toggle], [data-focus-toggle], .flip-coin')) return;
+          const label = button.textContent.trim().toLowerCase();
+          if (label === 'play') { complete(button, 'Pause'); return; }
+          if (label === 'pause') { complete(button, 'Play'); return; }
+          if (label.includes('copy')) { complete(button, 'Copied'); return; }
+          if (label.includes('start')) { complete(button, 'Running'); return; }
+          if (label.includes('open')) { complete(button, 'Opened'); return; }
+          if (label.includes('save')) { complete(button, 'Saved'); return; }
+          if (label.includes('add')) { complete(button, 'Added'); return; }
+          if (label.includes('reserve')) { complete(button, 'Reserved'); return; }
+          if (label.includes('turn on')) { complete(button, 'On'); return; }
+          complete(button, 'Ready');
+        });
+      });
+    </script>
+  </body>
+</html>

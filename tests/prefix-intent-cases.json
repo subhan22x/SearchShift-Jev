@@ -1,0 +1,17 @@
+[
+  { "query": "weather in Houston", "card": "weather" },
+  { "query": "new contact", "card": "new-contact" },
+  { "query": "find file", "card": "find-file" },
+  { "query": "set a 10 minute timer", "card": "timer" },
+  { "query": "buy milk eggs and coffee", "card": "checklist" },
+  { "query": "save link", "card": "save-link" },
+  { "query": "80 dollars to euros", "card": "currency" },
+  { "query": "reserve dinner at 4", "card": "reservation" },
+  { "query": "text Maya I am outside", "card": "contact" },
+  { "query": "lunch with Priya Friday at 1", "card": "event" },
+  { "query": "find my last mechanic oil change", "card": "suggested-steps" },
+  { "query": "turn off Bluetooth when I get home", "card": "automation" },
+  { "query": "calendar lunch tomorrow", "card": "event" },
+  { "query": "open Chrome", "app": "chrome" },
+  { "query": "Spotify", "app": "spotify" }
+]

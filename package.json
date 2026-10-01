@@ -1,0 +1,28 @@
+{
+  "name": "searchshift-jev",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test:fields": "node --experimental-strip-types --test tests/field-extraction.test.mjs",
+    "evaluate:fields": "node --experimental-strip-types scripts/evaluate-fields.mjs",
+    "preview": "vite preview",
+    "evaluate:intents": "node scripts/evaluate-intents.mjs",
+    "evaluate:prefixes": "node scripts/evaluate-prefixes.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "simple-icons": "^16.32.0",
+    "vite": "^5.4.10"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

@@ -17,7 +17,7 @@ The classifier is [JEV](https://typesafe.ai/)'s job. The application validates i
 | `/` | A searchable palette of 31 registered cards, grouped by everyday tasks, time and tools, find and go, and quick controls. |
 | `find PDF of a workout plan I downloaded last week` | A file-search request card. It is a prototype preview, not a scan of the device’s files. |
 
-The landscape demo above browses the command menu, finds Spotify, calculates `18% of 64`, creates a shopping checklist, and prepares a five-minute timer. It uses synthetic queries captured from the browser prototype.
+The landscape demo above browses the command menu, finds Spotify, calculates `18% of 64`, creates a shopping checklist, and starts a five-minute timer. It uses synthetic queries captured from the browser prototype.
 
 ## How it works
 

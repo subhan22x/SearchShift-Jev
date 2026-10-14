@@ -2,7 +2,7 @@
 
 **A phone-first launcher prototype that turns one natural-language search into an app suggestion or an editable task card.**
 
-![SearchShift-Jev demo: a natural-language query becomes a populated calendar-event draft](docs/assets/launcher-demo.gif)
+![SearchShift-Jev demo: browse the command menu, find an app, and try several task cards](docs/assets/launcher-demo.gif)
 
 SearchShift-Jev explores a simple idea: start with what you want to do, not which app you need to open. Search for an app, describe a small task, or type `/` to browse the available cards. App suggestions stay above task cards while an app search is still plausible.
 
@@ -17,7 +17,7 @@ The classifier is [JEV](https://typesafe.ai/)'s job. The application validates i
 | `/` | A searchable palette of 31 registered cards, grouped by everyday tasks, time and tools, find and go, and quick controls. |
 | `find PDF of a workout plan I downloaded last week` | A file-search request card. It is a prototype preview, not a scan of the device’s files. |
 
-The animated example above uses a synthetic event query. It shows the live launcher as it classifies the query and fills a reviewable draft; it does not create a real calendar event.
+The landscape demo above browses the command menu, finds Spotify, calculates `18% of 64`, creates a shopping checklist, and prepares a five-minute timer. It uses synthetic queries captured from the browser prototype.
 
 ## How it works
 

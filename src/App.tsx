@@ -1,6 +1,6 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { BatteryFull, CalendarDays, Clock3, MessageCircle, Search, Signal, Wifi, X } from "lucide-react";
-import { siGooglechrome, siObsidian, siSpotify, siWikipedia, siYoutube } from "simple-icons";
+import { siGoogle, siGooglechrome, siObsidian, siSpotify, siWikipedia, siYoutube } from "simple-icons";
 import { type AppCandidate, type Intent, type RemoteDecision, examples, parseJevDecision, resolveQuery } from "./intent";
 import Cards from "./components/Cards";
 import { type Command, CommandsPalette, filterCommands } from "./components/CommandsPalette";
@@ -10,7 +10,7 @@ function SearchWithApps({ query }: { query: string }) {
   const encoded = encodeURIComponent(query || "launcher search");
   return (
     <div className="search-with-apps" aria-label="Search this query in apps">
-      <a href={`https://www.google.com/search?q=${encoded}`} target="_blank" rel="noreferrer" aria-label="Search on Google"><span className="google-mark">G</span></a>
+      <a className="shortcut-google" href={`https://www.google.com/search?q=${encoded}`} target="_blank" rel="noreferrer" aria-label="Search on Google"><svg className="google-mark" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="searchshift-google-spectrum" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse"><stop stopColor="#4285f4" /><stop offset=".34" stopColor="#34a853" /><stop offset=".67" stopColor="#fbbc05" /><stop offset="1" stopColor="#ea4335" /></linearGradient></defs><path d={siGoogle.path} fill="url(#searchshift-google-spectrum)" /></svg></a>
       <a href={`https://www.youtube.com/results?search_query=${encoded}`} target="_blank" rel="noreferrer" aria-label="Search on YouTube"><svg className="youtube-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siYoutube.path} /></svg></a>
       <a href={`https://en.wikipedia.org/w/index.php?search=${encoded}`} target="_blank" rel="noreferrer" aria-label="Search Wikipedia"><svg className="wikipedia-mark" viewBox="0 0 24 24" aria-hidden="true"><path d={siWikipedia.path} /></svg></a>
     </div>
